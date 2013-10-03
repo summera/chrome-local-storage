@@ -1,58 +1,3 @@
-//Deprecated
-// Request storage usage and capacity left
-/*window.webkitStorageInfo.queryUsageAndQuota(webkitStorageInfo.TEMPORARY, //the type can be either TEMPORARY or PERSISTENT
-	function(used, remaining) {
-		console.log("Used quota: " + used + ", remaining quota: " + remaining);
-	}, function(e) {
-		console.log('Error', e); 
-} );*/
-
-//New
-// Request storage usage and capacity left
-navigator.webkitTemporaryStorage.queryUsageAndQuota(
-	function(used, remaining) {
-		console.log("**********************************");
-		console.log("Quota info BEFORE storing vars:");
- 		console.log("Used quota: " + used + ", remaining quota: " + remaining);
-	}, function(e) {
-  		console.log('Error', e); 
-} );
-
-
-//Deprecated
-// Request storage usage and capacity left
-/*window.webkitStorageInfo.queryUsageAndQuota(webkitStorageInfo.TEMPORARY, //the type can be either TEMPORARY or PERSISTENT
-	function(used, remaining) {
-		console.log("Used quota: " + used + ", remaining quota: " + remaining);
-	}, function(e) {
-		console.log('Error', e); 
-} );*/
-
-//New
-// Request storage usage and capacity left
-/*navigator.webkitTemporaryStorage.queryUsageAndQuota(
-	function(used, remaining) {
-
-		console.log("**********************************");
-		console.log("Quota info AFTER storing vars:");
-		
-		var foo1 = "foo1";
-		var foo2 = "foo2";
-
-		localStorage["test1"] = foo1;
-
-		localStorage["test2"] = foo2;
-
-		console.log("Test 1: " + localStorage["test1"]);
-
-		console.log("Test 2: " + localStorage["test2"]);
-
- 		console.log("Used quota: " + used + ", remaining quota: " + remaining);
-	}, function(e) {
-  		console.log('Error', e); 
-} );*/
-
-
 function getUsedAndQuota(){
 	navigator.webkitTemporaryStorage.queryUsageAndQuota(
 		function(used, remaining) {
@@ -72,6 +17,9 @@ function byteCount(s) {
 
 
 window.onload = function(){
+
+	getUsedAndQuota();
+
 	$('#f').on('change', function(ev) {
 		var f = ev.target.files[0];
 		var fr = new FileReader();
