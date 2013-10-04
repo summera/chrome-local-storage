@@ -1,6 +1,13 @@
+//Ari Summer
+//Testing HTML5 temporary local storage in chrome
+
 function getUsedAndRemaining(){
 	navigator.webkitTemporaryStorage.queryUsageAndQuota(
 		function(used, remaining) {
+			console.log("==========================");
+			console.log("TEMPORARY STORAGE");
+			console.log("==========================");
+
 			console.log("**********************************");
 			console.log("Get used and Quota:")
 
@@ -23,8 +30,6 @@ window.onload = function(){
 	$('#f').on('change', function(ev) {
 		var f = ev.target.files[0];
 		var fr = new FileReader();
-
-		//console.log('here');
 
 		//Callback for loading image
 		fr.onload = function(ev2) {
