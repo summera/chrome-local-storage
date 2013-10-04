@@ -1,4 +1,4 @@
-function getUsedAndQuota(){
+function getUsedAndRemaining(){
 	navigator.webkitTemporaryStorage.queryUsageAndQuota(
 		function(used, remaining) {
 			console.log("**********************************");
@@ -18,7 +18,7 @@ function byteCount(s) {
 
 window.onload = function(){
 
-	getUsedAndQuota();
+	getUsedAndRemaining();
 
 	$('#f').on('change', function(ev) {
 		var f = ev.target.files[0];
@@ -40,7 +40,7 @@ window.onload = function(){
 			console.log("Pull file data from local storage:");
 			console.log(localStorage["file"]);
 
-			getUsedAndQuota();
+			getUsedAndRemaining();
 
 		};
 
