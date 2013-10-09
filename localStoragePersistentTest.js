@@ -1,10 +1,67 @@
 //Ari Summer
 //Testing HTML5 permanent local storage in chrome
 
+var fs = null;
 function onError () { console.log ('Error : ', arguments); }
 
+function errorHandler(e) {
+	var msg = '';
+
+	switch (e.code) {
+		case FileError.QUOTA_EXCEEDED_ERR:
+			msg = 'QUOTA_EXCEEDED_ERR';
+			break;
+		case FileError.NOT_FOUND_ERR:
+			msg = 'NOT_FOUND_ERR';
+			break;
+		case FileError.SECURITY_ERR:
+			msg = 'SECURITY_ERR';
+			break;
+		case FileError.INVALID_MODIFICATION_ERR:
+			msg = 'INVALID_MODIFICATION_ERR';
+			break;
+		case FileError.INVALID_STATE_ERR:
+			msg = 'INVALID_STATE_ERR';
+			break;
+		default:
+			msg = 'Unknown Error';
+			break;
+	};
+
+	console.log('Error: ' + msg);
+}
+
+
+function addFile(data){
+
+  fs.root.getFile('media.txt', {create: true}, function(fileEntry) {
+
+		// Create a FileWriter object for our FileEntry (log.txt).
+		fileEntry.createWriter(function(fileWriter) {
+
+			fileWriter.onwriteend = function(e) {
+				console.log('Write completed.');
+			};
+
+			fileWriter.onerror = function(e) {
+				console.log('Write failed: ' + e.toString());
+			};
+
+			// Create a new Blob and write it to log.txt.
+			var blob = new Blob([data], {type: 'text/plain'});
+
+			fileWriter.write(blob);
+
+		}, errorHandler);
+
+	}, errorHandler);
+
+}
+
+
 function requestFS(grantedBytes) {
-	window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(fs) {
+	window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(filesystem) {
+		fs = filesystem;
 		console.log ('fs: ', arguments); // I see this on Chrome 27 in Ubuntu
 		console.log("Granted Bytes: " + grantedBytes);
 		console.log("**********************************");
@@ -26,7 +83,7 @@ function getGranted(){
 }
 
 function byteCount(s) {
-    return encodeURI(s).split(/%..|./).length - 1;
+	return encodeURI(s).split(/%..|./).length - 1;
 }
 
 function clearStorage(){
@@ -43,18 +100,18 @@ function printStorage(){
 function handleFileSelect(ev) {
 	var files = ev.target.files; // FileList object
 
-    // files is a FileList of File objects. List some properties.
-    var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
-      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                  '</li>');
-    }
-    $('#list').html('<ul>' + output.join('') + '</ul>');
+	// files is a FileList of File objects. List some properties.
+	var output = [];
+	for (var i = 0, f; f = files[i]; i++) {
+	  output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+				  f.size, ' bytes, last modified: ',
+				  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+				  '</li>');
+	}
+	$('#list').html('<ul>' + output.join('') + '</ul>');
 
-    //ari's code below
-    var f = ev.target.files[0];
+	//ari's code below
+	var f = ev.target.files[0];
 	var fr = new FileReader();
 
 	//Callback for loading image
@@ -64,18 +121,20 @@ function handleFileSelect(ev) {
 
 		console.log("Size of data: " + byteCount(ev2.target.result) + " bytes.");
 		
-		localStorage["file"] = ev2.target.result;
-		localStorage.setItem("file", ev2.target.result);
+		//localStorage["file"] = ev2.target.result;
+		//localStorage.setItem("file", ev2.target.result);
+
+		addFile(ev2.target.result);
 
 		console.log("Pull file data from local storage:");
 		console.log(localStorage["file"]);
 
 		//show image
 		var picFile = ev2.target;
-        var div = document.createElement("div");
-        div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" +
-                "title='" + picFile.name + "'/>";
-        resultDiv.html(div);
+		var div = document.createElement("div");
+		div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" +
+				"title='" + picFile.name + "'/>";
+		resultDiv.html(div);
 	};
 
 	//Start loading image
