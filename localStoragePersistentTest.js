@@ -1,6 +1,7 @@
 //Ari Summer
 //Testing HTML5 permanent local storage in chrome
 
+//Filesystem pointer
 var fs = null;
 function onError () { console.log ('Error : ', arguments); }
 
@@ -29,6 +30,25 @@ function errorHandler(e) {
 	};
 
 	console.log('Error: ' + msg);
+}
+
+function playFile(){ 
+	fs.root.getFile('media.txt', {}, function(fileEntry) {
+
+    // Get a File object representing the file,
+    // then use FileReader to read its contents.
+
+	    fileEntry.file(function(file) {
+	       var reader = new FileReader();
+
+	       reader.onloadend = function(e) {
+	         //$('#vid').src = this.result;
+	         $("#video").attr("src", this.result)
+	       };
+
+	       reader.readAsText(file);
+	    }, errorHandler);
+	}, errorHandler);
 }
 
 
@@ -126,8 +146,8 @@ function handleFileSelect(ev) {
 
 		addFile(ev2.target.result);
 
-		console.log("Pull file data from local storage:");
-		console.log(localStorage["file"]);
+		//console.log("Pull file data from local storage:");
+		//console.log(localStorage["file"]);
 
 		//show image
 		var picFile = ev2.target;
