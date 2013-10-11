@@ -43,6 +43,7 @@ function playFile(){
 
 	       reader.onloadend = function(e) {
 	         //$('#vid').src = this.result;
+	         //console.log(btoa(this.result));
 	         $("#video").attr("src", this.result)
 	       };
 
@@ -54,7 +55,7 @@ function playFile(){
 
 function addFile(data){
 
-  fs.root.getFile('media.txt', {create: true}, function(fileEntry) {
+  fs.root.getFile('media.mp4', {create: true}, function(fileEntry) {
 
 		// Create a FileWriter object for our FileEntry (log.txt).
 		fileEntry.createWriter(function(fileWriter) {
@@ -68,7 +69,7 @@ function addFile(data){
 			};
 
 			// Create a new Blob and write it to log.txt.
-			var blob = new Blob([data], {type: 'text/plain'});
+			var blob = new Blob([data], {type: 'application/octet-stream'});
 
 			fileWriter.write(blob);
 
@@ -89,7 +90,7 @@ function requestFS(grantedBytes) {
 }
 
 function getGranted(){
-	navigator.webkitPersistentStorage.requestQuota (1024*1024*1024, function(grantedBytes) {
+	navigator.webkitPersistentStorage.requestQuota (1024*1024*1024*1024, function(grantedBytes) {
 		console.log("==================================");
 		console.log("PERSISTENT STORAGE");
 		console.log("==================================");
@@ -150,15 +151,18 @@ function handleFileSelect(ev) {
 		//console.log(localStorage["file"]);
 
 		//show image
-		var picFile = ev2.target;
+		/*var picFile = ev2.target;
 		var div = document.createElement("div");
 		div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" +
 				"title='" + picFile.name + "'/>";
-		resultDiv.html(div);
+		resultDiv.html(div);*/
 	};
 
 	//Start loading image
-	fr.readAsDataURL(f);
+	//fr.readAsDataURL(f);
+	//console.log(readAsArrayBuffer(f));
+	//fr.readAsBinaryString(f);
+	fr.readAsArrayBuffer(f);
 }
 
 window.onload = function(){
