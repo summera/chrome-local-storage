@@ -3,6 +3,7 @@
 
 //Filesystem pointer
 var fs = null;
+var fileNum = 0;
 function onError () { console.log ('Error : ', arguments); }
 
 function errorHandler(e) {
@@ -32,30 +33,52 @@ function errorHandler(e) {
 	console.log('Error: ' + msg);
 }
 
-function playFile(){ 
-	fs.root.getFile('media.txt', {}, function(fileEntry) {
 
-    // Get a File object representing the file,
-    // then use FileReader to read its contents.
+function loadVideo(num){
+	var fileName; 
+	var videoId;
+	
+	fileName = 'media_' + num.toString() + '.mp4';
+	videoId = '#video_' + num.toString();
+	console.log(fileName);
+	console.log(videoId);
 
-	    fileEntry.file(function(file) {
-	       var reader = new FileReader();
+	fs.root.getFile(fileName, {videoId: videoId}, function(fileEntry) {
 
-	       reader.onloadend = function(e) {
-	         //$('#vid').src = this.result;
-	         //console.log(btoa(this.result));
-	         $("#video").attr("src", this.result)
-	       };
-
-	       reader.readAsText(file);
-	    }, errorHandler);
+		// Get a File object representing the file,
+		// then use FileReader to read its contents.
+		
+		$(videoId).attr("src", fileEntry.toURL());
 	}, errorHandler);
 }
 
+function loadVideos(numToLoad){ 
+	for(var i = 0; i < numToLoad; i ++){
+		loadVideo(i);
+	}
+}
 
-function addFile(data){
+function playVideos(num){
+	var videos = $("video").get();
+	for(var i = 0; i < num; i++){
+		videos[i].play();
+	}
+}
 
-  fs.root.getFile('media.mp4', {create: true}, function(fileEntry) {
+function pauseVideos(num){
+	var videos = $("video").get();
+	for(var i = 0; i < num; i++){
+		videos[i].pause();
+	}
+}
+
+function addFile(data, fileName){
+
+	
+	fileName = fileName + "_" + fileNum.toString() + '.mp4';
+	fileNum = fileNum + 1;
+
+	fs.root.getFile(fileName, {create: true}, function(fileEntry) {
 
 		// Create a FileWriter object for our FileEntry (log.txt).
 		fileEntry.createWriter(function(fileWriter) {
@@ -104,18 +127,7 @@ function getGranted(){
 }
 
 function byteCount(s) {
-	return encodeURI(s).split(/%..|./).length - 1;
-}
-
-function clearStorage(){
-	localStorage.clear();
-}
-
-function printStorage(){
-	for(key in localStorage) {
-		console.log(key);
-		console.log(localStorage[key]);
-	}
+	return s.byteLength;
 }
 
 function handleFileSelect(ev) {
@@ -141,27 +153,10 @@ function handleFileSelect(ev) {
 		console.dir(ev2);
 
 		console.log("Size of data: " + byteCount(ev2.target.result) + " bytes.");
-		
-		//localStorage["file"] = ev2.target.result;
-		//localStorage.setItem("file", ev2.target.result);
 
-		addFile(ev2.target.result);
-
-		//console.log("Pull file data from local storage:");
-		//console.log(localStorage["file"]);
-
-		//show image
-		/*var picFile = ev2.target;
-		var div = document.createElement("div");
-		div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" +
-				"title='" + picFile.name + "'/>";
-		resultDiv.html(div);*/
+		addFile(ev2.target.result, 'media');
 	};
 
-	//Start loading image
-	//fr.readAsDataURL(f);
-	//console.log(readAsArrayBuffer(f));
-	//fr.readAsBinaryString(f);
 	fr.readAsArrayBuffer(f);
 }
 
@@ -169,5 +164,5 @@ window.onload = function(){
 
 	getGranted();
 
-	$('#f').on('change', handleFileSelect);
+	$('.f').on('change', handleFileSelect);
 }
