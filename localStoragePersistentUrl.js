@@ -33,23 +33,10 @@ function errorHandler(e) {
 }
 
 function playFile(){ 
-	fs.root.getFile('media.txt', {}, function(fileEntry) {
-
-    // Get a File object representing the file,
-    // then use FileReader to read its contents.
-
-	    fileEntry.file(function(file) {
-	       var reader = new FileReader();
-
-	       reader.onloadend = function(e) {
-	         //$('#vid').src = this.result;
-	         //console.log(btoa(this.result));
-	         $("#video").attr("src", this.result)
-	       };
-
-	       reader.readAsText(file);
-	    }, errorHandler);
-	}, errorHandler);
+	fs.root.getFile('media.mp4', {}, function(fileEntry) {
+		
+		$("video").attr("src", fileEntry.toURL());
+	});
 }
 
 
@@ -69,9 +56,11 @@ function addFile(data){
 			};
 
 			// Create a new Blob and write it to log.txt.
-			var blob = new Blob([data], {type: 'application/octet-stream'});
+			var blob = new Blob([data], {type: 'video/mp4'});
 
 			fileWriter.write(blob);
+			
+			playFile();
 
 		}, errorHandler);
 
@@ -125,25 +114,26 @@ var toType = function(obj) {
 
 function handleFileSelect(url) {
 	console.log("Retrieving data from url " + url);
-	/*$.get(url, function(data){
-		console.log("Data retrieved");
-		//console.dir(data);
-		//console.log("Size of data: " + byteCount(data) + " bytes.");
-			
-		//addFile(data);
-	});*/
-	$.ajax({
-		url: url,
-		success: function(result) {
-			console.log(toType(result));
-			console.log("Size: " + result.length);
-			//console.log(result);
-			console.log(result);
-			console.log(result.substring(0, 1000));
 
-			}
+	var xhr = new XMLHttpRequest(); 
+	xhr.open('GET', url, true); 
+	//xhr.onprogress = updateStatus; // Optional
+	xhr.responseType = "arraybuffer"; 
+	xhr.onload = function(e) {
+		if(this.status == 200) {
+			//var bb = new Blob([this.response], {type: 'video/mp4'});
+			addFile(this.response);
 
-	});
+			/*var reader = new FileReader();
+				reader.addEventListener("loadend", function() {
+				   // reader.result contains the contents of blob as a typed array
+				   console.log(reader.result.substring(0, 1000));
+			});
+			reader.readAsBinaryString(bb);*/
+		}
+	}
+
+	xhr.send();
 
 }
 
