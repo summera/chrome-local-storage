@@ -104,7 +104,8 @@ function getGranted(){
 }
 
 function byteCount(s) {
-	return encodeURI(s).split(/%..|./).length - 1;
+	//return encodeURI(s).split(/%..|./).length - 1;
+	return s.byteLength;
 }
 
 function clearStorage(){
@@ -118,15 +119,32 @@ function printStorage(){
 	}
 }
 
+var toType = function(obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+}
+
 function handleFileSelect(url) {
 	console.log("Retrieving data from url " + url);
-	$.get(url,function(data){
+	/*$.get(url, function(data){
 		console.log("Data retrieved");
-		console.dir(data);
-		console.log("Size of data: " + byteCount(data) + " bytes.");
+		//console.dir(data);
+		//console.log("Size of data: " + byteCount(data) + " bytes.");
 			
-		addFile(data);
+		//addFile(data);
+	});*/
+	$.ajax({
+		url: url,
+		success: function(result) {
+			console.log(toType(result));
+			console.log("Size: " + result.length);
+			//console.log(result);
+			console.log(result);
+			console.log(result.substring(0, 1000));
+
+			}
+
 	});
+
 }
 
 window.onload = function(){

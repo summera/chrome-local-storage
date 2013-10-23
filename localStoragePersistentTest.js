@@ -147,17 +147,25 @@ function handleFileSelect(ev) {
 	var f = ev.target.files[0];
 	var fr = new FileReader();
 
-	//Callback for loading image
+	//Callback for loading video
 	fr.onload = function(ev2) {
 		var resultDiv = $("#result");
 		console.dir(ev2);
 
-		console.log("Size of data: " + byteCount(ev2.target.result) + " bytes.");
+		//console.log("Size of data: " + byteCount(ev2.target.result) + " bytes.");
+		/*console.log("Data: ");
+
+		var int32View = new Int8Array(ev2.target.result);
+		
+		for (var i=0; i<50; i++) {
+			console.log(int32View[i]);
+		}*/
 
 		addFile(ev2.target.result, 'media');
 	};
 
 	fr.readAsArrayBuffer(f);
+	//fr.readAsBinaryString(f);
 }
 
 window.onload = function(){
